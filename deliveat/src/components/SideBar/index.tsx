@@ -22,7 +22,7 @@ export default function NavBar(){
                 <p className='text-[#8D8D8D] mb-[1px] text-[13px] mt-[-2px]'>Overview</p>
                 <div className='h-[1px] bg-[#8D8D8D] w-full'><div></div></div>
             </div>
-            <div className="h-full px-[30px] py-[16px] overflow-y-aut">
+            <div className="px-[30px] py-[16px] overflow-y-auto">
                 <ul className="space-y-2">
                     <li className={pathname == "/orders" ? "bg-orange px-[14px] py-[10px] rounded-lg" : "bg-white px-[14px] py-[10px] rounded-lg"}>
                         <Link href="/orders" className='flex items-center justify-start'><Icon icon="fa6-solid:list" color={pathname == "/orders" ? "white" :"#42464D"}  width="20" height="20"/><span className={pathname == "/orders" ? "text-white ml-[10px] text-[16px] font-bold" : "text-[#42464D] ml-[10px] text-[16px] font-bold"}>Pedidos</span></Link>

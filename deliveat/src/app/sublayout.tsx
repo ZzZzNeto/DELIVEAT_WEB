@@ -5,11 +5,11 @@ import SideBar from "@/components/SideBar";
 export default function SubLayout({ children } : any){
     return (
         <>  
-            <main className="flex h-full bg-bg text-gray">
-                <section className=" w-[304px] h-full">
+            <main className="flex flex-1 bg-bg text-gray">
+                <section className=" w-[304px] ">
                     <SideBar/>
                 </section>
-                <section className="p-[44px] h-full w-[1550px]">
+                <section className="p-[44px] w-[1550px]">
                     {children}
                 </section>
             </main>
