@@ -2,11 +2,12 @@
 
 interface textInput {
     text : string
+    bg ?: string
 }
 
-export default function TextInput({text} : textInput){
+export default function TextInput({text, bg} : textInput){
     return (
-        <input type="text"  className="h-[50px] w-full p-[19px] text-[15px] rounded-[10px] outline-none" placeholder={text} />
+        <input type="text" className={`h-[50px] mb-[20px] w-full ${bg ? `bg-${bg}` : ""} p-[19px] text-[15px] rounded-[10px] outline-none`} placeholder={text} />
     )
   }
 

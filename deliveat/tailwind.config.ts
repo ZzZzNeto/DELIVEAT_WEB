@@ -12,6 +12,8 @@ const config: Config = {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
         'gradient-conic':
           'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
+        'login-bg': 'url("../../public/assets/bg_login.png")',
+        'signin-bg': 'url("../../public/assets/signin.jpg")'
       },
       colors: {
         bg : "#F2F4F6",

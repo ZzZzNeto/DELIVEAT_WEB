@@ -4,9 +4,42 @@ import SubLayout from "../sublayout"
 import TextInput from "@/components/textInput"
 import Select from "@/components/select"
 import { Icon } from '@iconify/react';
+import { useState } from 'react';
+import Modal from 'react-modal';
+import OrderModal from "@/components/ModalOrderContent"
 
+const customStyles = {
+    content: {
+      top: '50%',
+      left: '50%',
+      right: 'auto',
+      bottom: 'auto',
+      marginRight: '-50%',
+      padding: "30px",
+      transform: 'translate(-50%, -50%)',
+    },
+  };
+
+Modal.setAppElement('main');
+
+const items = [
+      {item : "Hamburguer Classic", obs : " sem picles e sem cebola"},
+      {item : "Adicional de batata-frita M"},
+      {item : "Coca-cola zero lata"},
+      {item : "Fatima de bolo de chocolate", obs : " sem cobertura"},
+]
 
 export default function History() {
+    const [modalIsOpen, setIsOpen] = useState(false);
+
+    function openModal() {
+        setIsOpen(true);
+    }
+
+    function closeModal() {
+        setIsOpen(false);
+    }
+
     const data = [
         {code : "#HFJ9S3", value : 29.50, date : "29/08/2013", user : "Pedro Silva", status : true},
         {code : "#HFJ9S3", value : 29.50, date : "29/08/2013", user : "Pedro Silva", status : false},
@@ -14,14 +47,29 @@ export default function History() {
         {code : "#HFJ9S3", value : 29.50, date : "29/08/2013", user : "Pedro Silva", status : true},
         {code : "#HFJ9S3", value : 29.50, date : "29/08/2013", user : "Pedro Silva", status : false},
         {code : "#HFJ9S3", value : 29.50, date : "29/08/2013", user : "Pedro Silva", status : true},
+        {code : "#HFJ9S3", value : 29.50, date : "29/08/2013", user : "Pedro Silva", status : true},
+        {code : "#HFJ9S3", value : 29.50, date : "29/08/2013", user : "Pedro Silva", status : false},
+        {code : "#HFJ9S3", value : 29.50, date : "29/08/2013", user : "Pedro Silva", status : true},
+        {code : "#HFJ9S3", value : 29.50, date : "29/08/2013", user : "Pedro Silva", status : false},
+        {code : "#HFJ9S3", value : 29.50, date : "29/08/2013", user : "Pedro Silva", status : false},
+        {code : "#HFJ9S3", value : 29.50, date : "29/08/2013", user : "Pedro Silva", status : true},
+        {code : "#HFJ9S3", value : 29.50, date : "29/08/2013", user : "Pedro Silva", status : true},
     ]
 
     return (
         <SubLayout>
-            <div className=" mb-[44px] w-[1500px] justify-between flex">
+            <Modal
+                isOpen={modalIsOpen}
+                onRequestClose={closeModal}
+                style={customStyles}
+                contentLabel="Example Modal"
+            >
+                <OrderModal code='K23UR3' close={closeModal} items={items} user={{name:"Rodolfo Padilha"}} addres={{street: "Rua das flores", number:158, city:"Pau dos Ferros", country:"RN"}} total={50.00} cupom={50} final={25.00} method='Cartão de credito'/>
+            </Modal>
+            <div className=" mb-[20px] w-[1465px] justify-between flex">
                 <TextInput text="Busque por palavras-chave..."/>
                 <div className="flex justify-between pl-[44px] w-[900px]"> 
-                    <div className="flex bg-white rounded-[10px] p-2.5 w-[235px] items-center">
+                    <div className="flex bg-white rounded-[10px] p-2.5 h-[50px] w-[235px] items-center">
                         <input type="radio" className="mx-[10px]"/>
                         <p>Cupom utilizado</p>
                     </div>
@@ -51,7 +99,7 @@ export default function History() {
                                         <div className=" bg-red_p rounded-[5px] text-center py-[2px] px-[5px]"><p className="text-[14px] text-white ">CANCELADO</p></div>}</td>
                                     <td className=" text-end items-center pr-[30px]">
                                         <button className="mt-[5px]"><Icon className="mr-[1px]" icon="material-symbols:delete" color="#CF2A36"  width="25" height="25"/></button>
-                                        <button><Icon icon="mdi:eye" color="#FF6D1B"  width="25" height="24"/></button>
+                                        <button onClick={openModal}><Icon icon="mdi:eye" color="#FF6D1B"  width="25" height="24"/></button>
                                     </td>
                                 </tr>
                             )) : <p>Sem dados</p>

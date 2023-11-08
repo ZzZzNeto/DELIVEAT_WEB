@@ -55,7 +55,7 @@ export default function Analysys() {
                         </div>
                         <div className="px-[40px] py-[20px]">
                             <div className="flex items-center justify-between">
-                                <div>
+                                <div className="w-[95px]">
                                     <h1 className="font-bold text-[20px]">Domingo</h1>
                                     <p className="text-[12px] mb-[10px]">29/10/2023</p>
                                 </div>
@@ -65,7 +65,7 @@ export default function Analysys() {
                             </div>
                             <div className="border-[1px] border-gray border-dashed border-collapse border-spacing-30 my-[10px]"></div>
                             <div className="flex items-center justify-between">
-                                <div>
+                                <div className="w-[95px]">
                                     <h1 className="font-bold text-[20px]">Segunda</h1>
                                     <p className="text-[12px] mb-[10px]">30/10/2023</p>
                                 </div>
@@ -75,7 +75,7 @@ export default function Analysys() {
                             </div>
                             <div className="border-[1px] border-gray border-dashed border-collapse border-spacing-30 my-[10px]"></div>
                             <div className="flex items-center justify-between">
-                                <div>
+                                <div className="w-[95px]">
                                     <h1 className="font-bold text-[20px]">Terça</h1>
                                     <p className="text-[12px] mb-[10px]">31/10/2023</p>
                                 </div>
@@ -85,7 +85,7 @@ export default function Analysys() {
                             </div>
                             <div className="border-[1px] border-gray border-dashed border-collapse border-spacing-30 my-[10px]"></div>
                             <div className="flex items-center justify-between">
-                                <div>
+                                <div className="w-[95px]">
                                     <h1 className="font-bold text-[20px]">Quarta</h1>
                                     <p className="text-[12px] mb-[10px]">01/11/2023</p>
                                 </div>
@@ -95,7 +95,7 @@ export default function Analysys() {
                             </div>
                             <div className="border-[1px] border-gray border-dashed border-collapse border-spacing-30 my-[10px]"></div>
                             <div className="flex items-center justify-between">
-                                <div>
+                                <div className="w-[95px]">
                                     <h1 className="font-bold text-[20px]">Quinta</h1>
                                     <p className="text-[12px] mb-[10px]">02/11/2023</p>
                                 </div>
@@ -105,7 +105,7 @@ export default function Analysys() {
                             </div>
                             <div className="border-[1px] border-gray border-dashed border-collapse border-spacing-30 my-[10px]"></div>
                             <div className="flex items-center justify-between">
-                                <div>
+                                <div className="w-[95px]">
                                     <h1 className="font-bold text-[20px]">Sexta</h1>
                                     <p className="text-[12px] mb-[10px]">03/11/2023</p>
                                 </div>
@@ -115,7 +115,7 @@ export default function Analysys() {
                             </div>
                             <div className="border-[1px] border-gray border-dashed border-collapse border-spacing-30 my-[10px]"></div>
                             <div className="flex items-center justify-between">
-                                <div>
+                                <div className="w-[95px]">
                                     <h1 className="font-bold text-[20px]">Sabado</h1>
                                     <p className="text-[12px] mb-[10px]">04/11/2023</p>
                                 </div>

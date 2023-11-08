@@ -7,17 +7,18 @@ interface data {
     width : number, 
     icon ?: string,
     text : string,
-    font : number
+    font : number,
+    onClick : Function,
 }
 
-export default function Button({type, height, width, icon, text, font} : data){
+export default function Button({type, height, width, icon, text, font, onClick} : data){
     return (
-        <button className={
-            type == 1 ? ` bg-orange text-white text-[${font}px] h-[${height}px] w-[${width}px] items-center flex px-[5px] py-[2px] rounded-[3px] hover:bg-[#a36440]` : 
-            type == 2 ? ` bg-red_p text-white text-[${font}px] h-[${height}px] w-[${width}px] items-center flex px-[5px] py-[2px] rounded-[3px] hover:bg-red-900` : 
-            type == 3 ? ` bg-gray text-white text-[${font}px] h-[${height}px] w-[${width}px] items-center flex px-[5px] py-[2px] rounded-[3px] hover:bg-black` : ""}
+        <button onClick={() => onClick()} style={{height : height, width : width}} className={
+            type == 1 ? ` bg-orange transition text-white text-[${font}px] items-center justify-center flex px-[5px] ml-[10px] py-[2px] rounded-[5.9px] hover:bg-[#a36440]`  : 
+            type == 2 ? ` bg-red_p transition text-white text-[${font}px] justify-center items-center flex px-[5px] ml-[10px] py-[2px] rounded-[5.9px] hover:bg-red-900` : 
+            type == 3 ? ` bg-gray transition text-white text-[${font}px] justify-center items-center flex px-[5px] ml-[10px] py-[2px] rounded-[5.9px] hover:bg-black` : ""}
         >
-            {text}{icon && <Icon icon={icon} color="white" width={font} height={font}/>}
+            {text}{icon && <Icon className='ml-[10px]' icon={icon} color="white" width={font} height={font}/>}
         </button>
     )
   }

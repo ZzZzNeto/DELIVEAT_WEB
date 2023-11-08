@@ -63,7 +63,7 @@ export default function Menu() {
                     <div className="ml-[44px] w-[1300px]">
                         <div className="flex">
                             {categories.map((category, key) => ( 
-                                <button onClick={() => setSelected(category.id)} key={key} className={`hover px-[10px] pt[2px] ml-[20px] rounded-ss-[5px] border-b-[0px] border-solid border-gray border-[1px] rounded-se-[5px] ${select == category.id ? "bg-orange text-[white] border-none" : ""}`}>
+                                <button onClick={() => setSelected(category.id)} key={key} className={`hover px-[10px] pt[2px] ml-[20px] rounded-ss-[5px] hover:bg-bg transition border-b-[0px] border-solid border-gray border-[1px] rounded-se-[5px] ${select == category.id ? "bg-orange hover:bg-orange text-[white] border-none" : ""}`}>
                                     <p>{category.name}</p>
                                 </button>
                             ))}
@@ -114,7 +114,7 @@ export default function Menu() {
                             <Icon icon="fluent:ios-arrow-24-filled" rotate={2} color="#000000"  width="15" height="14"/>
                         </button>
                         <div className=" relative right-[-585px]">
-                            <Button type={1} height={54} width={111} text="Novo" font={16} icon="ic:baseline-plus"/>
+                            <Button onClick={() => console.log("")} type={1} height={30} width={80} text="Novo" font={16} icon="ic:baseline-plus"/>
                         </div>
                     </div>
                 </div>
