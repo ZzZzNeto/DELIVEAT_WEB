@@ -5,7 +5,7 @@ import CardOrder from '../CardOrder';
 
 interface data {
     name : string
-    tasks : Array<{id : number, name: string, date: string, user:string,address:string, price:number}>
+    tasks : Array<{id : number, name: string, date: string, user:string,address:string, total:number}>
     color : string
     id : number
 }
@@ -22,7 +22,7 @@ export default function Column({id,name, tasks, color} : data){
                     <div ref={droppableProvided.innerRef} {...droppableProvided.droppableProps} className="pb-[140px] h-full w-[270px] py-[25px]">
                         {tasks.map((task, index) => { 
                             return (
-                                <CardOrder index={index} id={task.id} name={task.name} date={task.date} user={task.user} address={task.address} price={task.price}/>
+                                <CardOrder index={index} id={task.id} products={task.products} code={task.code} name={task.products[0].name} date={task.created_at} user={task.user} address={task.address.street} payment_method={task.payment_method} total={task.total}/>
                             )
                         })}
                     </div>

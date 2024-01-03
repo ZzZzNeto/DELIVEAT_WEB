@@ -5,8 +5,10 @@ import TextInput from "@/components/textInput"
 import Select from "@/components/select"
 import avatar from '@/../public/assets/avatar.jpg'
 import Image from "next/image";
+import axios from "axios"
 import Button from "@/components/Button"
-import { useState } from 'react';
+import { useState, useContext, useEffect } from 'react';
+import { MyContext } from "@/contexts"
 import Modal from 'react-modal';
 import OrderModal from "@/components/ModalOrderContent"
 
@@ -33,6 +35,36 @@ const items = [
 
 export default function Comments() {
     const [modalIsOpen, setIsOpen] = useState(false);
+    const [comments,setComments] = useState([]);
+    const { data, updateData } = useContext(MyContext);
+    const [visible, setVisible] = useState(false)
+
+    useEffect(() => {
+        get_comments()
+    },[data])
+
+    const get_comments = async () => {
+        if(data){
+            const dataset = await axios.get(
+                `http://127.0.0.1:8000/rating/list/`, {headers: { Authorization: `Bearer ${data.access_token}`}} 
+            )
+            setComments(dataset.data)
+        }
+    }
+
+    const formatNoteDate = (date: string) => {
+        if (!date) return date;
+        const formattedDate = new Date(date);
+        return (
+          formattedDate.toLocaleDateString("pt-br", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+          }) +
+          " - " +
+          formattedDate.toLocaleTimeString("pt-br", { timeStyle: "short" })
+        );
+      };
 
     function openModal() {
         setIsOpen(true);
@@ -41,32 +73,6 @@ export default function Comments() {
     function closeModal() {
         setIsOpen(false);
     }
-
-    const comments = [
-        {
-            comment : "Não gostei nem um pouco, a comida estava extremamente fria e sem gosto, o primeiro provavelmente por conta da demora na entrega, 2 horas é demais!!!!! Não recomendo, pior restaurante!! ",
-            user : {name: "Marta laurinda", profile: "https://randomuser.me/api/portraits/women/19.jpg"},
-            date: "09/08/2030",
-            answer: {
-                comment : "Ta bom então 👍👏",
-                user : {name: "Nome da empresa", profile: avatar},
-                date: "10/08/2030"
-            },
-            rate: 2.5
-        },
-        {
-            comment : "Não gostei nem um pouco, a comida estava extremamente fria e sem gosto, o primeiro provavelmente por conta da demora na entrega, 2 horas é demais!!!!! Não recomendo, pior restaurante!! ",
-            user : {name: "Maria Pedrosa", profile: "https://randomuser.me/api/portraits/women/84.jpg"},
-            date: "09/08/2030",
-            rate: 2.5
-        },
-        {
-            comment : "Não gostei nem um pouco, a comida estava extremamente fria e sem gosto, o primeiro provavelmente por conta da demora na entrega, 2 horas é demais!!!!! Não recomendo, pior restaurante!! ",
-            user : {name: "Joao Gomes", profile: "https://randomuser.me/api/portraits/men/14.jpg"},
-            date: "09/08/2030",
-            rate: 2.5
-        }
-    ]
 
     return (
         <SubLayout>
@@ -82,22 +88,20 @@ export default function Comments() {
                 <TextInput text="Busque por palavras-chave..."/>
                 <Select df="Ordenar por" options={["Melhor avaliados", "Pior avaliados", "Mais recentes", "Mais antigos"]} />
             </div>
-            <div className="bg-white flex-1 px-[80px] py-[44px] justify-center items-center text-center">
+            <div className="bg-white w-full flex-1 px-[80px] py-[44px] justify-center items-center text-center">
                 {
                 comments.map((comment, index) => {
-                    const [visible, setVisible] = useState(false)
-
                     return (
                     <div className="flex-1">
                         <div className="mb-[50px] flex">
-                            <div className="w-[280px] mr-[20px] h-fit relative flex-row justify-center items-center text-center">
-                                <Image className="m-auto rounded-full" alt="profile" width={100} height={100} src={comment.user.profile}/>
+                            <div className="w-[180px] w-min-[200px] mr-[40px] h-fit relative flex-row justify-center items-center text-center">
+                                <Image className="m-auto rounded-full" alt="profile" width={100} height={100} src={comment.user.profile_picture ? comment.user.profile_picture : avatar}/>
                                 <h1 className="mt-[15px] text-[20px] font-bold">{comment.user.name}</h1>
-                                <p className="mt-[-5px] text-[14px] text-[#ADB5BA]">{comment.date}</p>
-                                <div className=" w-fit absolute right-[10px] top-0 bg-orange rounded-[5px] px-[7px] py-[1px] flex justify-center"><p className=" font-bold text-white text-[20px]">{comment.rate}</p></div>
+                                <p className="mt-[-5px] text-[14px] text-[#ADB5BA]">{formatNoteDate(comment.date)}</p>
+                                <div className=" w-fit absolute right-[10px] top-0 bg-orange rounded-[5px] px-[7px] py-[1px] flex justify-center"><p className=" font-bold text-white text-[20px]">{comment.rating}.0</p></div>
                             </div>
-                            <div className="mt-[20px]">
-                                <p className="text-[20px] text-justify indent-[20px]">{comment.comment}</p>
+                            <div className="mt-[20px] w-[1150px]">
+                                <p className="text-[20px] text-justify indent-[20px]">{comment.text}</p>
                                 <div className="flex justify-end mt-[20px]">
                                     <Button onClick={openModal} text="Ver pedido" height={30} width={150} font={18} type={3}/>
                                     {comment.answer ? null : <Button onClick={() => setVisible(true)} text="Responder" height={30} width={150} icon="mdi:share" font={18} type={1}/>}

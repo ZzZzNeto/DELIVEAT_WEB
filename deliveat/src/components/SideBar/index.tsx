@@ -6,15 +6,37 @@ import { usePathname } from 'next/navigation'
 import { Icon } from '@iconify/react';
 import Link from 'next/link';
 
+import { MyContext  } from '@/contexts'
+import { useContext, useEffect } from "react";
+import { useRouter } from 'next/navigation';
+
 export default function NavBar(){
     const pathname = usePathname()
+    const { data, updateData } = useContext(MyContext);
+    const router = useRouter()
+
+    const logout = () => {
+        localStorage.removeItem('access_token')
+        updateData(" ")
+        router.push('/')
+    }
+
+    useEffect(() => {
+
+    },[data])
+
+    const get_image = () => {
+        if(data){
+            return `http://127.0.0.1:8000/${data.profile_picture}`
+        }
+    }
 
     return (
         <aside id="default-sidebar" className="fixed bg-white top-0 left-0 z-40 w-[304px] h-screen transition-transform -translate-x-full sm:translate-x-0" aria-label="Sidebar">
             <div className="pt-[50px] px-[44px] flex justify-start items-center">
-                <Image alt='avatar' src={avatar} height={70} width={70} className='rounded-full'/>
+                <Image alt='avatar' src={data.profile_picture ? get_image() : avatar} height={70} width={70} className='rounded-full'/>
                 <div className='pl-[10px]'>
-                    <p className=' font-bold text-[16px] truncate'>Nome da empresa</p>
+                    <p className=' font-bold text-[16px] truncate'>{data.name}</p>
                     <p className=' text-[13px] mt-[-2px]'>Lanchonete</p>
                 </div>
             </div>
@@ -40,7 +62,7 @@ export default function NavBar(){
                         <Link href="/comments" className='flex items-center justify-start'><Icon icon="material-symbols:comment" color={pathname == "/comments" ? "white" :"#42464D"}  width="20" height="20"/><span className={pathname == "/comments" ? "text-white ml-[10px] text-[16px] font-bold" : "text-[#42464D] ml-[10px] text-[16px] font-bold"}>Avaliações</span></Link>
                     </li> 
                     <li className='px-[14px] py-[10px]'>
-                        <Link href="/" className='flex items-center justify-start'><Icon icon="mdi:exit-to-app" color="#CF2A36"  width="20" height="20"/><span className='ml-[10px] text-[16px] text-red_p hover:text-red-800 font-bold'>SAIR</span></Link>
+                        <button onClick={logout} className='flex items-center justify-start'><Icon icon="mdi:exit-to-app" color="#CF2A36"  width="20" height="20"/><span className='ml-[10px] text-[16px] text-red_p hover:text-red-800 font-bold'>SAIR</span></button>
                     </li>
                 </ul>
             </div>

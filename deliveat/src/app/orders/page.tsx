@@ -8,19 +8,52 @@ import { Icon } from '@iconify/react';
 
 import { DragDropContext } from 'react-beautiful-dnd'
 import dynamic from "next/dynamic";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { MyContext } from '@/contexts'
+import axios from 'axios';
+import { string } from "yup";
 
 export default function Orders() {
     const Column = dynamic(() => import("@/components/Column"), {ssr:false} )
+    const { data, updateData } = useContext(MyContext);
 
-    const tasks = {
-        1 : {id : 1, name : "hamburguer", date : "08 de Dez, 2023", user : "Pedro Fagundes", address : "Rua Isidro Queiroga, n°158", price : 23.79},
-        2 : {id : 2, name : "hamburguer", date : "08 de Dez, 2023", user : "Pedro Fagundes", address : "Rua Isidro Queiroga, n°158", price : 23.79},
-        3 : {id : 3, name : "hamburguer", date : "08 de Dez, 2023", user : "Pedro Fagundes", address : "Rua Isidro Queiroga, n°158", price : 23.79},
-        4 : {id : 4, name : "hamburguer", date : "08 de Dez, 2023", user : "Pedro Fagundes", address : "Rua Isidro Queiroga, n°158", price : 23.79},
-        5 : {id : 5, name : "hamburguer", date : "08 de Dez, 2023", user : "Pedro Fagundes", address : "Rua Isidro Queiroga, n°158", price : 23.79},
-        6 : {id : 6, name : "hamburguer", date : "08 de Dez, 2023", user : "Pedro Fagundes", address : "Rua Isidro Queiroga, n°158", price : 23.79}
-    }
+    const [orders, setOrders] = useState([]);
+    const [columns, setColumns] = useState([
+        { id: 1, name: "Pendente", color: "#FF6D1B", tasks: [] },
+        { id: 2, name: "Aceito", color: "#FF6D1B", tasks: [] },
+        { id: 3, name: "Pronto", color: "#FF6D1B", tasks: [] },
+        { id: 4, name: "Enviado", color: "#FF6D1B", tasks: [] },
+        { id: 5, name: "Concluido", color: "#157AFE", tasks: [] },
+    ]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+          if (data && data.access_token) {
+            await getOrders();
+          }
+        };
+        fetchData();
+    }, [data]);
+
+    const getOrders = async () => {
+        try {
+            const dataset = await axios.get(
+                `http://127.0.0.1:8000/order/list`, 
+                {headers: { Authorization: `Bearer ${data.access_token}` }} 
+            );  
+    
+            setOrders(dataset.data);
+    
+            const organizedColumns = columns.map(column => {
+                const tasks = dataset.data.filter(order => order.status.toLowerCase() === column.name.toLowerCase());
+                return { ...column, tasks };
+            });
+    
+            setColumns(organizedColumns);
+        } catch (error) {
+            console.error('Error fetching orders:', error);
+        }
+    };
     
     const reorderColumn = (sourceCol, startIndex, endIndex) => {
         const [removed] = sourceCol.tasks.splice(startIndex,1)
@@ -33,17 +66,19 @@ export default function Orders() {
         destinationCol.tasks.splice(endIndex, 0 , removed)
         return destinationCol
     }
-    
-    const [columns, setColumns] = useState([
-        {id : 1, name: "Recebidos", color : "#FF6D1B", tasks: [tasks[4],tasks[5],tasks[6]]},
-        {id : 2, name: "Aceitos", color : "#FF6D1B", tasks: [tasks[1],tasks[3],tasks[2]]},
-        {id : 3, name: "Prontos", color : "#FF6D1B", tasks: []},
-        {id : 4, name: "Enviados", color : "#FF6D1B", tasks: []},
-        {id : 5, name: "Concluidos", color : "#157AFE", tasks: []},
-    ])
+
+    const updateStatus = async (id, column_name) => {
+        console.log(column_name)
+        await axios.patch(
+            `http://127.0.0.1:8000/order/update/${id}`, {
+                status : column_name
+            });
+    }
 
     const onDragEnd = (result : any) => {
-        const {destination, source} = result
+        const {destination, source, draggableId} = result
+        let col = columns.find(obj => obj.id == destination.droppableId).name.toUpperCase()
+        updateStatus(draggableId,col)
 
         if (!destination) return;
 

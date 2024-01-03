@@ -26,7 +26,7 @@ export default function OrderModal({code, items, user, addres, total, cupom, fin
             <ul className=" h-[100px] flex-wrap flex-col flex list-['+'] list-inside">
                 {items.map((item, key) => ( 
                     <>
-                        <li key={key}>{item.item}</li>
+                        <li key={key}>1 : {item.name}</li>
                         <ul className=" list-['OBS:'] list-inside">
                             {item.obs && <li className='ml-[30px]'>{item.obs}</li>}
                         </ul>

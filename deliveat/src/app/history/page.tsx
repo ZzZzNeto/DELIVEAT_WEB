@@ -4,8 +4,10 @@ import SubLayout from "../sublayout"
 import TextInput from "@/components/textInput"
 import Select from "@/components/select"
 import { Icon } from '@iconify/react';
-import { useState } from 'react';
+import { useState, useEffect, useContext } from 'react';
+import { MyContext } from "@/contexts";
 import Modal from 'react-modal';
+import axios from "axios";
 import OrderModal from "@/components/ModalOrderContent"
 
 const customStyles = {
@@ -31,6 +33,44 @@ const items = [
 
 export default function History() {
     const [modalIsOpen, setIsOpen] = useState(false);
+    const [orders, setOrders] = useState([]);
+    const { data, updateData } = useContext(MyContext);
+
+    useEffect(() => {
+        const fetchData = async () => {
+          if (data && data.access_token) {
+            await getOrders();
+          }
+        };
+        fetchData();
+    }, [data]);
+
+    const getOrders = async () => {
+        try {
+            const dataset = await axios.get(
+                `http://127.0.0.1:8000/order/list`, 
+                {headers: { Authorization: `Bearer ${data.access_token}` }} 
+            );  
+    
+            setOrders(dataset.data);
+        } catch (error) {
+            console.error('Error fetching orders:', error);
+        }
+    };
+
+    const formatNoteDate = (date: string) => {
+        if (!date) return date;
+        const formattedDate = new Date(date);
+        return (
+          formattedDate.toLocaleDateString("pt-br", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+          }) +
+          " - " +
+          formattedDate.toLocaleTimeString("pt-br", { timeStyle: "short" })
+        );
+      };
 
     function openModal() {
         setIsOpen(true);
@@ -39,22 +79,6 @@ export default function History() {
     function closeModal() {
         setIsOpen(false);
     }
-
-    const data = [
-        {code : "#HFJ9S3", value : 29.50, date : "29/08/2013", user : "Pedro Silva", status : true},
-        {code : "#HFJ9S3", value : 29.50, date : "29/08/2013", user : "Pedro Silva", status : false},
-        {code : "#HFJ9S3", value : 29.50, date : "29/08/2013", user : "Pedro Silva", status : true},
-        {code : "#HFJ9S3", value : 29.50, date : "29/08/2013", user : "Pedro Silva", status : true},
-        {code : "#HFJ9S3", value : 29.50, date : "29/08/2013", user : "Pedro Silva", status : false},
-        {code : "#HFJ9S3", value : 29.50, date : "29/08/2013", user : "Pedro Silva", status : true},
-        {code : "#HFJ9S3", value : 29.50, date : "29/08/2013", user : "Pedro Silva", status : true},
-        {code : "#HFJ9S3", value : 29.50, date : "29/08/2013", user : "Pedro Silva", status : false},
-        {code : "#HFJ9S3", value : 29.50, date : "29/08/2013", user : "Pedro Silva", status : true},
-        {code : "#HFJ9S3", value : 29.50, date : "29/08/2013", user : "Pedro Silva", status : false},
-        {code : "#HFJ9S3", value : 29.50, date : "29/08/2013", user : "Pedro Silva", status : false},
-        {code : "#HFJ9S3", value : 29.50, date : "29/08/2013", user : "Pedro Silva", status : true},
-        {code : "#HFJ9S3", value : 29.50, date : "29/08/2013", user : "Pedro Silva", status : true},
-    ]
 
     return (
         <SubLayout>
@@ -88,13 +112,13 @@ export default function History() {
                                 <th className="text-[16px] py-[15px] text-start">Status</th>
                                 <th> </th>
                             </tr>
-                            {data ? data.map((item, key) => ( 
+                            {orders ? orders.map((item, key) => ( 
                                 <tr key={key}>
                                     <td className="w-[290px] py-[10px] text-[16px] text-start pl-[50px]">{item.code}</td>
-                                    <td className="text-[16px] py-[10px] text-start">R${item.value}</td>
-                                    <td className="w-[300px] text-[16px] pl-[70px] py-[10px] text-start">{item.date}</td>
+                                    <td className="text-[16px] py-[10px] text-start">R${item.total}</td>
+                                    <td className="w-[300px] text-[16px] pl-[70px] py-[10px] text-start">{formatNoteDate(item.created_at)}</td>
                                     <td className="text-[16px] py-[10px] text-start">{item.user}</td>
-                                    <td className="w-[100px] text-[16px] py-[10px] text-start">{item.status ? 
+                                    <td className="w-[100px] text-[16px] py-[10px] text-start">{item.status == "CONCLUIDO" ? 
                                         <div className="bg-[#49C81D] rounded-[5px] text-center py-[2px] px-[5px]"><p className="text-[14px] text-white ">ENTREGUE</p></div> :
                                         <div className=" bg-red_p rounded-[5px] text-center py-[2px] px-[5px]"><p className="text-[14px] text-white ">CANCELADO</p></div>}</td>
                                     <td className=" text-end items-center pr-[30px]">

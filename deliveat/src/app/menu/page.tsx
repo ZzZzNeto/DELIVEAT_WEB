@@ -4,35 +4,104 @@ import SubLayout from "../sublayout"
 import avatar from '@/../public/assets/avatar.jpg'
 import Image from "next/image";
 import Button from "@/components/Button";
-
+import { MyContext } from '@/contexts'
+import { useRouter } from "next/navigation";
 import { Icon } from '@iconify/react';
-import { useState } from "react";
+import { useState,useContext, useEffect } from "react";
+import axios from "axios";
+import Modal from 'react-modal';
+import ProductModal from '../../components/ModalCreateProduct';
 
 export default function Menu() {
     const [select, setSelected] = useState(0)
+    const [reload, setReload] = useState(false)
+    const { data, updateData } = useContext(MyContext);
+    const [categories, setCategories] = useState([])
+    const [products, setProducts] = useState([])
+    const [detailId, setId] = useState("")
+    const router = useRouter()
+    const [modalIsOpen, setIsOpen] = useState(false);
+    const [modal2IsOpen, set2IsOpen] = useState(false);
 
-    const categories = [
-        {name : "Hamburguer", id : 1},
-        {name : "Massas", id : 2},
-        {name : "Bebidas", id : 3},
-    ]
+    const customStyles = {
+        content: {
+          top: '50%',
+          left: '50%',
+          right: 'auto',
+          bottom: 'auto',
+          marginRight: '-50%',
+          padding: "30px",
+          transform: 'translate(-50%, -50%)',
+        },
+      };
 
-    const data = [
-        {name : "Hmaburguer classic", price : 29.50, side_dishes : ["ketchup", "maionese", "refri"], category : "Hamburguer"},
-        {name : "Hmaburguer classic", price : 29.50, side_dishes : ["ketchup", "maionese", "refri"], category : "Hamburguer"},
-        {name : "Hmaburguer classic", price : 29.50, side_dishes : ["ketchup", "maionese", "refri"], category : "Hamburguer"},
-        {name : "Hmaburguer classic", price : 29.50, side_dishes : ["ketchup", "maionese", "refri"], category : "Hamburguer"}
-    ]
+    function openModal() {
+        setIsOpen(true);
+    }
+
+    function closeModal() {
+        setIsOpen(false);
+    }
+
+    function refresh() {
+        router.refresh()
+        setReload(!reload)
+    }
+
+    function openModal2(id : string) {
+        set2IsOpen(true);
+        setId(id)
+    }
+
+    function closeModal2() {
+        set2IsOpen(false);
+    }
+
+    useEffect(() => {
+        get_categories();
+        get_products();
+    }, [data, reload]);
+
+    const get_image = () => {
+        if(data){
+            return `http://127.0.0.1:8000/${data.profile_picture}`
+        }
+    }
+
+    const delete_product = async (id) => {
+        await axios.delete(
+            `http://127.0.0.1:8000/product/delete/${id}`, {headers: { Authorization: `Bearer ${data.access_token}`}} 
+        )
+        setReload(!reload)
+    }
+
+    const get_categories = async () => {
+        if(data){
+            const new_categories = await axios.get(
+                `http://127.0.0.1:8000/category/list`, {headers: { Authorization: `Bearer ${data.access_token}` }} 
+            ); 
+            setCategories(new_categories.data)
+        }
+    }
+
+    const get_products = async () => {
+        if(data){
+            const new_products = await axios.get(
+                `http://127.0.0.1:8000/product/list`, {headers: { Authorization: `Bearer ${data.access_token}` }} 
+            ); 
+            setProducts(new_products.data)
+        }
+    }
 
     return (
         <SubLayout>
             <div className="rounded-[20px] h-full w-[1450px]">
                 <div className="bg-gray rounded-ss-[20px] rounded-se-[20px] h-[168px] w-full"></div>
                 <div className="bg-white rounded-es-[20px] rounded-ee-[20px] h-[710px] p-[30px] w-[1450px]">
-                    <Image src={avatar} alt="opa" width={250} height={250} className=" absolute rounded-full top-[128px] left-[421px]" />
+                    <Image src={data.profile_picture ? get_image() : avatar} alt="opa" width={250} height={250} className=" absolute rounded-full top-[128px] left-[421px]" />
                     <div className=" mb-[44px] flex pl-[330px]">
                         <div className="mr-[75px]">
-                            <h1 className="text-[36px] font-bold">Nome da empresa</h1>
+                            <h1 className="text-[36px] font-bold">{data.name}</h1>
                             <p className="mt-[-10px] text-[20px]">Lanchonete</p>
                         </div>
                         <div className="mr-[30px]">
@@ -41,13 +110,13 @@ export default function Menu() {
                         <div className="">
                             <div className="mt-[20px] h-fit flex items-center">
                                 <div className="bg-orange px-[8px] py-[1px] h-[35px] flex items-center rounded-[5px] mr-[10px]">
-                                    <p className="text-white text-[20px] font-bold">4.8</p>
+                                    <p className="text-white text-[20px] font-bold">4.0</p>
                                 </div>
-                                <p className="text-[16px]">248 avaliações</p>
+                                <p className="text-[16px]">4 avaliações</p>
                             </div>
                             <div className="mt-[6px] h-fit flex items-center">
                                 <div className="bg-blue px-[8px] py-[1px] h-[35px] flex items-center rounded-[5px] mr-[10px]">
-                                    <p className="text-white text-[20px] font-bold">238</p>
+                                    <p className="text-white text-[20px] font-bold">6</p>
                                 </div>
                                 <p className="text-[16px]">pedidos entregues</p>
                             </div>
@@ -82,15 +151,23 @@ export default function Menu() {
                                 <th className="text-[16px] py-[15px] text-start">Categoria</th>
                                 <th> </th>
                             </tr>
-                            {data ? data.map((item, key) => ( 
+                            <Modal
+                                isOpen={modal2IsOpen}
+                                onRequestClose={closeModal2}
+                                style={customStyles}
+                                contentLabel="Example Modal"
+                            >
+                                <ProductModal close={closeModal2} id={detailId}/>
+                            </Modal>
+                            {products ? products.map((item, key) => ( 
                                 <tr key={key}>
                                     <td className="w-[390px] py-[10px] text-[16px] text-start pl-[50px]">{item.name}</td>
-                                    <td className="text-[16px] py-[10px] text-start">R${item.price}</td>
-                                    <td className="w-[500px] text-[16px] pl-[70px] py-[10px] text-start">{item.side_dishes.map((e, i) => (e + ", ")).join(' ')}</td>
-                                    <td className="text-[16px] py-[10px] text-start">{item.category}</td>
+                                    <td className="text-[16px] py-[10px] text-start">R${item.cost}</td>
+                                    <td className="w-[500px] text-[16px] pl-[70px] py-[10px] text-start">{item.product_bonus.map((e, i) => (i === 0 ? e.name : `, ${e.name}`)).join('')}</td>
+                                    <td className="text-[16px] py-[10px] text-start">{item.categories.map((e, i) => (i === 0 ? e.name : `, ${e.name}`)).join('')}</td>
                                     <td className=" text-end items-center pr-[30px]">
-                                        <button className="mt-[5px]"><Icon className="mr-[1px]" icon="material-symbols:delete" color="#CF2A36"  width="25" height="25"/></button>
-                                        <button><Icon icon="ic:round-edit" color="#FF6D1B"  width="25" height="24"/></button>
+                                        <button onClick={() => delete_product(item.id)} className="mt-[5px]"><Icon className="mr-[1px]" icon="material-symbols:delete" color="#CF2A36"  width="25" height="25"/></button>
+                                        <button onClick={() => openModal2(item.id)}><Icon icon="ic:round-edit" color="#FF6D1B"  width="25" height="24"/></button>
                                     </td>
                                 </tr>
                             )) : <p>Sem dados</p>
@@ -114,7 +191,15 @@ export default function Menu() {
                             <Icon icon="fluent:ios-arrow-24-filled" rotate={2} color="#000000"  width="15" height="14"/>
                         </button>
                         <div className=" relative right-[-585px]">
-                            <Button onClick={() => console.log("")} type={1} height={30} width={80} text="Novo" font={16} icon="ic:baseline-plus"/>
+                            <Modal
+                                isOpen={modalIsOpen}
+                                onRequestClose={closeModal}
+                                style={customStyles}
+                                contentLabel="Example Modal"
+                            >
+                                <ProductModal close={closeModal} reload={refresh}/>
+                            </Modal>
+                            <Button onClick={openModal} type={1} height={30} width={80} text="Novo" font={16} icon="ic:baseline-plus"/>
                         </div>
                     </div>
                 </div>
